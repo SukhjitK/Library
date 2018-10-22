@@ -1,2 +1,2 @@
 # Library
-Simple Registration (PHP, PDO and MySQL)
+Simple Registration Form (PHP, PDO and MySQL)
