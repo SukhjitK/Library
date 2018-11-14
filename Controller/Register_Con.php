@@ -14,18 +14,27 @@ if(isset($_POST['firstname'])){
     $User->password = htmlentities($_POST['password']);
     $User->passwordtwo = htmlentities($_POST['passwordtwo']);
     
+//    if(!($connection->userAlreadyExists($User))){
+//        echo "User Already Exists";
+//    }
     
-    if(!($connection->userAlreadyExists($User))){
-        echo "This user already exists";
-        return;
-    }  
-    
-    $addNewUser = $connection->addUser($User);
-    
-    if($addNewUser == TRUE){
-        echo ("New user added");
+    if(!($connection->validEmail($User))) {
+        echo "Email is valid";
     } else {
-        echo ("Failed");
-        
+        echo "Email is not valid";
     }
+//    
+////    if(!($connection->userAlreadyExists($User) && $connection->validEmail($User))){
+////        echo "This user already exists and Email is not valid";
+////        return;
+////    }  
+//    
+//    $addNewUser = $connection->addUser($User);
+//    
+//    if($addNewUser == TRUE){
+//        echo ("New user added");
+//    } else {
+//        echo ("Failed");
+//        
+//    }
 }

@@ -6,10 +6,8 @@ class Database{
     private static $connection = null;
     private $servername = "localhost";
     private $username = "root";
-    //add password
     private $password = "";
-    //add database name
-    private $dbname = "";
+    private $dbname = "library";
             
 
     private function __construct() {
@@ -40,7 +38,7 @@ class Database{
     return $stmt->execute([':firstname' => $User->firstname, ':lastname' => $User->lastname, ':email' => $User->email, ':password' => $User->password, ':passwordtwo' => $User->passwordtwo]);
         }
     
-        function userAlreadyExists($User) {
+    function userAlreadyExists($User) {
         $sql = "SELECT email FROM users WHERE email = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$User->email]);
@@ -49,6 +47,17 @@ class Database{
             return true;
         }
         return false;
+    }
+    
+    function validEmail($User) {
+        $sql = "SELECT email FROM users WHERE email = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$User->email]);
+        if(filter_var($stmt, FILTER_SANITIZE_EMAIL)){
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }
