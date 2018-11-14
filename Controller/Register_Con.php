@@ -1,50 +1,31 @@
 <?php
- class Database{
-     private $pdo;
-    private static $connection = null;
-    private $servername = "localhost";
-    private $username = "root";
-    //add password
-    private $password = "";
-    //add database name
-    private $dbname = "";
-            
-     private function __construct() {
-        //Set DSN 
-        $dsn = "mysql:host=$this->servername;dbname=$this->dbname";
-        //pdo connection
-        try{
-            $this->pdo = new PDO($dsn, $this->username, $this->password,  [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        } catch (PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
-            die();
-        }
-        }
-     //create instance
-    public static function getConnection() {
-        if (!isset(self::$connection)) {
-            self::$connection = new Database();
-        }
-        return self::$connection;
+require_once('../Model/Database.php');
+require_once('../Model/Users.php');
+
+ if(isset($_POST['firstname'])){
+    
+    //Database connection
+    $connection = Database::getConnection();
+    
+    $User = new User();
+    $User->firstname = htmlentities($_POST['firstname']);
+    $User->lastname = htmlentities($_POST['lastname']);
+    $User->email = htmlentities($_POST['email']);
+    $User->password = htmlentities($_POST['password']);
+    $User->passwordtwo = htmlentities($_POST['passwordtwo']);
+    
+    
+    if(!($connection->userAlreadyExists($User))){
+        echo "This user already exists";
+        return;
+    }  
+    
+    $addNewUser = $connection->addUser($User);
+    
+    if($addNewUser == TRUE){
+        echo ("New user added");
+    } else {
+        echo ("Failed");
+        
     }
-    
-    //insert user into database
-    function addUser($User){
-        $sql = "INSERT INTO users (firstname, lastname, email, password, passwordtwo) "
-            . "VALUES (:firstname, :lastname, :email , :password, :passwordtwo)";
-    $stmt = $this->pdo->prepare($sql);
-    return $stmt->execute([':firstname' => $User->firstname, ':lastname' => $User->lastname, ':email' => $User->email, ':password' => $User->password, ':passwordtwo' => $User->passwordtwo]);
-        }
-    
-        function userAlreadyExists($User) {
-        $sql = "SELECT email FROM users WHERE email = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$User->email]);
-        $exists = $stmt->fetchAll();
-        if (count($exists) == 0) {
-            return true;
-        }
-        return false;
-    }
-    
 }
